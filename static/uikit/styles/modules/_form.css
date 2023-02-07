@@ -45,7 +45,7 @@ textarea.input {
   width: 100%;
   padding: 1.2rem 1.5rem;
   border-radius: 0.5rem;
-  border: 2px solid var(--color-light);
+  border: 2px solid #9fa1a5;
   transition: all 0.3s ease-in-out;
   background-color: var(--color-bg);
 }
