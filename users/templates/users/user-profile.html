@@ -2,14 +2,13 @@
 {% block content %}
 
 <!-- Main Section -->
-<main class="settingsPage profile my-md">
+<main class="profile my-md">
     <div class="container">
         <div class="layout">
             <div class="column column--1of3">
                 <div class="card text-center">
                     <div class="card__body dev">
-                        <a class="tag tag--pill tag--main settings__btn" href="#"><i class="im im-edit"></i> Edit</a>
-                        <img class="avatar avatar--xl dev__avatar" src="{{profile.profile_image.url}}"/>
+                        <img class="avatar avatar--xl" src="{{profile.profile_image.url}}"/>
                         <h2 class="dev__name">{{profile.name}}</h2>
                         <p class="dev__title">{{profile.short_intro}}</p>
                         <p class="dev__location">{{profile.location}}</p>
@@ -56,69 +55,77 @@
                         {{profile.bio}}
                     </p>
                 </div>
-                <div class="settings">
-                    <h3 class="settings__title">Skills</h3>
-                    <a class="tag tag--pill tag--sub settings__btn tag--lg" href="#"><i class="im im-plus"></i> Add
-                        Skill</a>
-                </div>
 
-                <table class="settings__table">
-                    {% for skill in skills %}
-                    <tr>
-                        <td class="settings__tableInfo">
-                            <h4>{{skill}}</h4>
-                            <p>
+                {% if skills or otherSkills %}
+                
+                <div class="devInfo">
+                    <h3 class="devInfo__title">Skills</h3>
+                    <div class="devInfo__skills">
+                        {% for skill in skills %}
+
+                        <div class="devSkill">
+                            <h4 class="devSkill__title">{{skill}}</h4>
+                            <p class="devSkill__info">
                                 {{skill.description|safe}}
                             </p>
-                        </td>
-                        <td class="settings__tableActions">
-                            <a class="tag tag--pill tag--main settings__btn" href="#"><i class="im im-edit"></i>
-                                Edit</a>
-                            <a class="tag tag--pill tag--main settings__btn" href="#"><i
-                                    class="im im-x-mark-circle-o"></i>
-                                Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                        </div>
 
-                <div class="settings">
-                    <h3 class="settings__title">Projects</h3>
-                    <a class="tag tag--pill tag--sub settings__btn tag--lg" href="{% url 'create-project' %}"><i
-                            class="im im-plus"></i> Add
-                        Project</a>
+                        {% endfor %}
+
+                        <h3 class="devInfo__subtitle">Other Skills</h3>
+                        <div class="devInfo__otherSkills">
+                            {% for skill in otherSkills %}
+
+                            <span class="tag tag--pill tag--sub tag--lg">
+                              <small>{{skill}}</small>
+                            </span>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if projects %}
+                
+                <div class="devInfo">
+                    <h3 class="devInfo__title">Projects</h3>
+                    <div class="grid grid--two">
+                        {% for project in projects %}
+                        <div class="column">
+                            <div class="card project">
+                                <a href="{% url 'project' project.id %}" class="project">
+                                    <img class="project__thumbnail" src="{{project.featured_image.url}}" alt="project"/>
+                                    <div class="card__body">
+                                        <h3 class="project__title">{{project.title}}</h3>
+                                        <p><a class="project__author" href="{% url 'user-profile' project.owner.id %}">{{project.owner}}</a></p>
+                                        <p class="project--rating">
+                                            <span style="font-weight: bold;">{{project.vote_ratio}}%</span> Postitive
+                                            Feedback ({{project.vote_total}} Vote{{project.vote_total|pluralize:"s"}})
+                                        </p>
+                                        <div class="project__tags">
+                                            {% for tag in project.tags.all %}
+                                            <span class="tag tag--pill tag--main">
+                                              <small>{{tag}}</small>
+                                            </span>
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
                 </div>
 
-                <table class="settings__table">
-                    {% for project in projects %}
-                    <tr>
-                        <td class="settings__thumbnail">
-                            <a href="{% url 'project' project.id %}"><img src="{{project.featured_image.url}}"
-                                                                          alt="Project Thumbnail"/></a>
-                        </td>
-                        <td class="settings__tableInfo">
-                            <a href="single-project.html">{{project.title}}</a>
-                            <p>
-                                {{project.description|slice:"100"}}
-                            </p>
-                        </td>
-                        <td class="settings__tableActions">
-                            <a class="tag tag--pill tag--main settings__btn"
-                               href="{% url 'update-project' project.id %}"><i class="im im-edit"></i>
-                                Edit</a>
-                            <a class="tag tag--pill tag--main settings__btn"
-                               href="{% url 'delete-project' project.id %}"><i
-                                    class="im im-x-mark-circle-o"></i>
-                                Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </table>
+                {% endif %}
+
             </div>
         </div>
     </div>
 </main>
-
 {% endblock content %}
 
 

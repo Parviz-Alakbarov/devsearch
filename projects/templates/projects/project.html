@@ -39,10 +39,13 @@
 
                 <div class="comments">
                     <h3 class="singleProject__subtitle">Feedback</h3>
+                    {% if project.vote_total > 0 %}
+
                     <h5 class="project--rating">
                         {{project.vote_ratio}}% Postitive Feedback ({{project.vote_total}}
                         Vote{{project.vote_total|pluralize:"s"}})
                     </h5>
+                    {% endif %}
 
                     <form class="form" action="#" method="POST">
                         <!-- Textarea -->
