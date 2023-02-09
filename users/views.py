@@ -3,16 +3,21 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from django.db.models import Q
-from .models import Profile, Skill
+from .models import Profile
 from .forms import CustomUserCreationForm, ProfileForm, SkillForm
-from .utils import searchProfiles
+from .utils import searchProfiles, paginateProfiles
 
 
 def profiles(request):
     profiles, search_text = searchProfiles(request)
-    return render(request, 'users/profiles.html', {'profiles': profiles, 'search_query': search_text})
-
+    custom_range, profiles, paginator_num_pages = paginateProfiles(request, profiles, 1)
+    return render(request, 'users/profiles.html', {
+        'profiles': profiles,
+        'search_query': search_text,
+        'paginator_num_pages': paginator_num_pages,
+        'custom_range': custom_range,
+        'before_last_page': paginator_num_pages - 1
+    })
 
 def userProfile(request, pk):
     profile = Profile.objects.get(id=pk)

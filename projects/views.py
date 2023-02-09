@@ -1,16 +1,23 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
-from .models import Porject, Tag
+from .models import Porject
 from .forms import ProjectForm
-from .utils import searchProjects
+from .utils import searchProjects, paginateProjects
 
 
 def projects(request):
     projectList, search_text = searchProjects(request)
-    return render(request, 'projects/projects.html', {'projects': projectList, 'search_query': search_text})
+
+    custom_range, projectList, paginator_num_pages = paginateProjects(request, projectList, 3)
+
+    return render(request, 'projects/projects.html', {
+        'projects': projectList,
+        'search_query': search_text,
+        'paginator_num_pages': paginator_num_pages,
+        'custom_range': custom_range,
+        'before_last_page': paginator_num_pages-1
+    })
 
 
 def project(request, name):
