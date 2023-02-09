@@ -3,13 +3,15 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
-from .models import Profile
+from django.db.models import Q
+from .models import Profile, Skill
 from .forms import CustomUserCreationForm, ProfileForm, SkillForm
+from .utils import searchProfiles
 
 
 def profiles(request):
-    profiles = Profile.objects.all()
-    return render(request, 'users/profiles.html', {'profiles': profiles})
+    profiles, search_text = searchProfiles(request)
+    return render(request, 'users/profiles.html', {'profiles': profiles, 'search_query': search_text})
 
 
 def userProfile(request, pk):
