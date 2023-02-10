@@ -1,6 +1,8 @@
 import uuid
 
 from django.db import models
+from django.db.transaction import on_commit
+
 from users.models import Profile
 
 
@@ -21,8 +23,25 @@ class Porject(models.Model):
         return self.title
 
     class Meta:
-        ordering = ['created']
-        # ordering = ['-created'] desc
+        ordering = ['-vote_ratio', '-vote_total']
+
+    @property
+    def reviewers(self):
+        queryset = self.review_set.all().values_list('owner__id', flat=True)
+        return queryset
+    @property
+    def getVoteCount(self):
+        reviews = self.review_set.all()
+        vote_count = reviews.count()
+        total_vote = 0
+        for vote in ('5', '4', '3', '2', '1'):
+            vote_value = int(vote)
+            count = reviews.filter(value=vote).count()
+            total_vote += vote_value * count
+        vote_ratio = (total_vote / (vote_count * 5)) * 100
+        self.vote_ratio = vote_ratio
+        self.vote_total = vote_count
+        self.save()
 
 
 class Review(models.Model):
@@ -33,11 +52,15 @@ class Review(models.Model):
         ('4', 'Good'),
         ('5', 'Perfect')
     )
+    owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True)
     project = models.ForeignKey(Porject, on_delete=models.SET_NULL, null=True)
     body = models.TextField(null=True, blank=True)
     value = models.CharField(max_length=200, choices=VOTE_TYPE)
     created = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+
+    class Meta:
+        unique_together = [['owner', 'project']]
 
     def __str__(self):
         return self.VOTE_TYPE[int(self.value) - 1][1]

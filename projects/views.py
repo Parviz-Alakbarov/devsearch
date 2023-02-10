@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Porject
-from .forms import ProjectForm
+from .forms import ProjectForm, ReviewForm
 from .utils import searchProjects, paginateProjects
 
 
@@ -16,14 +16,26 @@ def projects(request):
         'search_query': search_text,
         'paginator_num_pages': paginator_num_pages,
         'custom_range': custom_range,
-        'before_last_page': paginator_num_pages-1
+        'before_last_page': paginator_num_pages - 1
     })
 
 
 def project(request, name):
     projectObj = Porject.objects.get(id=name)
     tags = projectObj.tags.all()
-    return render(request, 'projects/project.html', {'project': projectObj, 'tags': tags})
+    form = ReviewForm()
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        review = form.save(commit=False)
+        review.project = projectObj
+        review.owner = request.user.profile
+        review.save()
+
+        projectObj.getVoteCount
+
+        messages.success(request, 'Review added!')
+
+    return render(request, 'projects/project.html', {'project': projectObj, 'tags': tags, 'form': form})
 
 
 @login_required(login_url='login')
