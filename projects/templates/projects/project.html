@@ -49,11 +49,12 @@
                     </h5>
                     {% endif %}
 
-                    {% if request.user.profile.id in project.reviewers %}
-
-                    <p>You have already submitted your review for this project</p>
-                    {% elif request.user.profile == project.owner %}
+                    {% if request.user.profile == project.owner %}
                     <p>You cannot review your own work</p>
+
+                    {% elif request.user.profile.id in project.reviewers %}
+                    <p>You have already submitted your review for this project</p>
+
                     {% elif request.user.is_authenticated %}
                     <form class="form" action="{% url 'project' project.id %}" method="POST">
                         {% csrf_token %}
