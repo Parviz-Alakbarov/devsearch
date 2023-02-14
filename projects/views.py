@@ -8,7 +8,6 @@ from .utils import searchProjects, paginateProjects
 
 def projects(request):
     projectList, search_text = searchProjects(request)
-
     custom_range, projectList, paginator_num_pages = paginateProjects(request, projectList, 3)
 
     return render(request, 'projects/projects.html', {
