@@ -11,10 +11,11 @@ def searchProjects(request):
     tags = Tag.objects.filter(name__icontains=search_text)
 
     projectList = Porject.objects.distinct().filter(
-        Q(title__icontains=search_text) |
-        Q(description__icontains=search_text) |
-        Q(owner__name__icontains=search_text) |
-        Q(tags__in=tags)
+        (Q(title__icontains=search_text) |
+         Q(description__icontains=search_text) |
+         Q(owner__name__icontains=search_text) |
+         Q(tags__in=tags)) &
+        Q(owner__isnull=False)
     )
     return projectList, search_text
 

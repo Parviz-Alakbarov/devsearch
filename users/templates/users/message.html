@@ -7,7 +7,10 @@
         <div class="message">
             <a class="backButton" href="{% url 'inbox' %}"><i class="fa-solid fa-arrow-left"></i></a>
             <h2 class="message__subject">{{message.subject}}</h2>
+            {% if message.sender %}
             <a href="{% url 'user-profile' message.sender.id %}" class="message__author">{{message.name}}</a>
+            {% else %}
+            <p class="message__author">{{message.name}}</p>
             <p class="message__date">{{message.created}}</p>
             <div class="message__body">
                 {{message.body|linebreaksbr}}

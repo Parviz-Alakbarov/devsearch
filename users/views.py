@@ -81,7 +81,6 @@ def userAccount(request):
     profile = request.user.profile
     skills = profile.skill_set.all()
     projects = profile.porject_set.all()
-    print(projects)
     return render(request, 'users/account.html', {'profile': profile, 'skills': skills, 'projects': projects})
 
 

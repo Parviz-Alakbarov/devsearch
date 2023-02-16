@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Porject
+from .models import Porject, Tag
 from .forms import ProjectForm, ReviewForm
 from .utils import searchProjects, paginateProjects
 
@@ -43,15 +43,19 @@ def createProject(request):
     form = ProjectForm()
 
     if request.method == 'POST':
+        newtags = request.POST.get('newtags').replace(',', " ").split()
+
         form = ProjectForm(request.POST, request.FILES)
         if form.is_valid():
             project = form.save(commit=False)
             project.owner = profile
             project.save()
+            for tag in newtags:
+                tag, created = Tag.objects.get_or_create(name=tag)
+                project.tags.add(tag)
             return redirect('projects')
         else:
             messages.error(request, 'An error has occurred during registration')
-            print(form.errors)
 
     return render(request, 'projects/project_form.html', {'form': form})
 
@@ -59,18 +63,23 @@ def createProject(request):
 @login_required(login_url='login')
 def updateProject(request, pk):
     profile = request.user.profile
-    project = profile.project_set.get(id=pk)
+    project = profile.porject_set.get(id=pk)
     if project is None:
         messages.error(request, "Project not found!")
         return redirect('projects')
     form = ProjectForm(instance=project)
 
     if request.method == 'POST':
+        newtags = request.POST.get('newtags').replace(',', " ").split()
+
         form = ProjectForm(request.POST, request.FILES, instance=project)
         if form.is_valid():
             form.save()
+            for tag in newtags:
+                tag, created = Tag.objects.get_or_create(name=tag)
+                project.tags.add(tag)
             return redirect('projects')
-    return render(request, 'projects/project_form.html', {'form': form})
+    return render(request, 'projects/project_form.html', {'form': form, 'project':project})
 
 
 @login_required(login_url='login')

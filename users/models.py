@@ -23,6 +23,14 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user.username)
 
+    @property
+    def imageURl(self):
+        try:
+            url = self.profile_image.url
+        except:
+            url = ''
+        return url
+
     class Meta:
         ordering: ['created']
 

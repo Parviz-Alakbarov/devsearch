@@ -9,7 +9,7 @@
             <a class="backButton" href="{% url 'projects' %}"><i class="fa-solid fa-arrow-left"></i></a>
             <br>
 
-            <form class="form"  action="{% url 'create-project' %}" method="POST" enctype="multipart/form-data">
+            <form class="form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 {% for field in form %}
@@ -21,6 +21,20 @@
                 </div>
                 {% endfor %}
 
+                <div class="form__field">
+                    {% for tag in project.tags.all %}
+                    <div class="tag tag--pill tag--main project-tag" data-tag="{{tag.id}}"
+                         data-project="{{project.id}}">{{tag.name}} &#215;
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                <div class="form__field">
+                    <label for="formInput#text">Tags</label>
+                    <textarea class="input" name="newtags"></textarea>
+                </div>
+
                 <input class="btn btn--sub btn--lg my-md" type="submit" value="Submit"/>
             </form>
         </div>
@@ -28,6 +42,3 @@
 </main>
 
 {% endblock content%}
-
-
-
